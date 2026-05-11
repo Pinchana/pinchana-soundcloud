@@ -70,7 +70,7 @@ sc_downloader = SoundCloudDownloader(storage.base_path, proxy=proxy)
 @router.post("/scrape", response_model=ScrapeResponse)
 async def process_scrape_request(request: ScrapeRequest):
     url = str(request.url)
-    if not re.match(r"(?:https?://)?(?:www\.)?soundcloud\.com/[^\s]+", url):
+    if not re.match(r"(?:https?://)?(?:www\.|on\.)?soundcloud\.com/[^\s]+", url):
         raise HTTPException(status_code=400, detail="Invalid SoundCloud URL")
 
     try:
