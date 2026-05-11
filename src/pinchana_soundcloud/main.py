@@ -33,6 +33,12 @@ class SoundCloudDownloader(MusicDownloader):
     """SoundCloud: direct yt-dlp extraction."""
 
     async def resolve(self, url: str) -> tuple[str, dict]:
+        # Resolve on.soundcloud.com short links
+        if "on.soundcloud.com" in url:
+            url = await self._resolve_redirect(url)
+            if not url:
+                raise MusicDownloadError("Could not resolve SoundCloud short link")
+
         loop = asyncio.get_running_loop()
         opts = {
             "quiet": True,
@@ -57,6 +63,17 @@ class SoundCloudDownloader(MusicDownloader):
             "cover_url": info.get("thumbnail"),
         }
         return url, meta
+
+    @staticmethod
+    async def _resolve_redirect(url: str) -> str | None:
+        import aiohttp
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.head(url, allow_redirects=True, timeout=aiohttp.ClientTimeout(total=10)) as resp:
+                    return str(resp.url)
+        except Exception as e:
+            logger.warning("Failed to resolve SoundCloud short link: %s", e)
+            return None
 
     @staticmethod
     def _extract_info(url: str, opts: dict):
