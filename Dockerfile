@@ -11,7 +11,7 @@ COPY pinchana-core/pyproject.toml pinchana-core/uv.lock pinchana-core/README.md 
 RUN mkdir -p ../pinchana-core/src
 COPY pinchana-core/src ../pinchana-core/src
 
-COPY pinchana-soundcloud/pyproject.toml pinchana-soundcloud/uv.lock pinchana-soundcloud/README.md ./
+COPY pinchana-soundcloud/pyproject.toml pinchana-soundcloud/README.md ./
 RUN uv sync --frozen --no-install-project
 
 COPY pinchana-soundcloud/src ./src
